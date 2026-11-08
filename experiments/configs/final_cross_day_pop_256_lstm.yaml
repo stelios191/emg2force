@@ -1,0 +1,16 @@
+# The causal LSTM baseline with the final recipe, 5 seeds. Compare with final_cross_day_pop_256 and its seeds file
+# (same splits).
+name: final_cross_day_pop_256_lstm
+protocol: cross_day_pop
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: none  # holds a press (see docs/experiments.md)
+filter: {montage: car}  # each grid's mean subtracted
+seeds: [0, 1, 2, 3, 4]
+save_models: true
+models:
+  lstm: {hidden: 64, layers: 2, dropout: 0.3, weight_decay: 0.01, steps: 2000, personal_share: 0.5, aug_shift: 1.0}
+save_predictions: true

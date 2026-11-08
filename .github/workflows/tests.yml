@@ -1,0 +1,28 @@
+name: tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      # The locked versions are what is tested. The lower bounds in pyproject.toml are not.
+      - run: uv sync --frozen
+      - run: uv lock --check
+      # Skipped here, listed by -rs: tests needing the Hyser download (tests/data holds a 0.5 s real excerpt), and the
+      # demo-rendering test, which needs an OpenGL context (off-screen Mesa in the same process crashes PyTorch on Linux).
+      - run: uv run pytest -q -rs
+      - run: uv run ruff check . && uv run ruff format --check .
+      - run: uv run mypy

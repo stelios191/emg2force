@@ -1,0 +1,16 @@
+# The previous final recipe (running-mean input normalisation), seed 0, on the same splits as final_cross_day_pop_256:
+# measures on the 16 what dropping the normalisation changed (the choice itself was made on development people).
+name: final_cross_day_pop_256_running_mean
+protocol: cross_day_pop
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: running_mean
+filter: {montage: car}  # each grid's mean subtracted
+seeds: [0]
+save_predictions: true
+save_models: all  # every fold: the held-press test on the 16 (experiments.hold_test)
+models:
+  tcn: {hidden: 64, dilations: [1, 2, 4, 8, 16], dropout: 0.3, weight_decay: 0.01, steps: 2000, personal_share: 0.5, aug_shift: 1.0}

@@ -1,0 +1,17 @@
+# Labelled calibration on the 16: the frozen new-day TCN fine-tuned on new-day data, against ridges refitted on day 1
+# plus the same data (experiments.calibration).
+name: calibration_curve
+protocol: cross_day_pop_cal
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: none  # holds a press (see docs/experiments.md)
+filter: {montage: car}  # each grid's mean subtracted
+budgets_s: [0, 5, 10, 25]
+tcn: {hidden: 64, dilations: [1, 2, 4, 8, 16], dropout: 0.3, weight_decay: 0.01, steps: 2000, personal_share: 0.5, aug_shift: 1.0}
+fine_tune: {lr: 0.0001, steps: 100}  # all layers, chosen on the development people
+ridge:
+  - {name: ridge, alpha: 0.1, input_norm: none}
+  - {name: ridge_rm, alpha: 10.0, input_norm: running_mean}

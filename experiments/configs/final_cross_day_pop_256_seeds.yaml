@@ -1,0 +1,15 @@
+# Final new-day recipe (final_cross_day_pop_256), seeds 1-4 for the 5-seed mean.
+name: final_cross_day_pop_256_seeds
+protocol: cross_day_pop
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: none  # holds a press (see docs/experiments.md)
+filter: {montage: car}  # each grid's mean subtracted
+seeds: [1, 2, 3, 4]
+save_predictions: false
+save_models: false
+models:
+  tcn: {hidden: 64, dilations: [1, 2, 4, 8, 16], dropout: 0.3, weight_decay: 0.01, steps: 2000, personal_share: 0.5, aug_shift: 1.0}

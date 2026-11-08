@@ -1,0 +1,78 @@
+[project]
+name = "emg2force"
+version = "0.1.0"
+description = "Causal HD-sEMG finger-force decoder on Hyser, scored on new days and new people, driving a simulated gripper"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "stelios191" }]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.13",
+    "pandas>=2.2",
+    "matplotlib>=3.9",
+    "pyyaml>=6.0",
+    "torch>=2.5",
+    "onnx>=1.17",
+    "onnxruntime>=1.20",
+    "mujoco>=3.2",
+    "imageio>=2.35",
+    "imageio-ffmpeg>=0.5",
+    "pillow>=10",
+]
+
+[project.scripts]
+emg2force-download = "emg2force.download:main"
+emg2force-benchmark = "emg2force.benchmark:main"
+emg2force-replay = "emg2force.replay:main"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.13",
+    "pytest>=8.3",
+    "ruff==0.6.9",
+    "types-pyyaml>=6.0",
+    "wfdb>=4.1",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/emg2force"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = ["data: needs the downloaded Hyser files (skipped if absent)"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["F", "E9", "B", "I", "UP", "C4", "PIE", "SIM", "PERF", "PT", "RUF"]
+# zip(strict=) noise. Frozen-dataclass / range defaults are immutable. Hyser.mvc cache is per dataset object by design.
+# ×, ±, − and similar are intended in report text
+ignore = ["B905", "B008", "B019", "RUF001", "RUF002", "RUF003"]
+
+[tool.mypy]
+files = ["src", "experiments"]
+ignore_missing_imports = true  # onnxruntime, mujoco, imageio and scipy ship no type information
+warn_unused_ignores = true
+check_untyped_defs = true
+disallow_untyped_defs = true  # every function in src and experiments is annotated
+disallow_incomplete_defs = true
+untyped_calls_exclude = ["torch", "matplotlib"]  # Tensor.backward, FigureCanvasAgg.buffer_rgba are unannotated upstream
+
+[[tool.mypy.overrides]]
+module = "emg2force.*"
+# --strict minus two flags: disallow_any_generics (arrays stay np.ndarray, shapes and dtypes are in the docstrings)
+# and warn_return_any (np.load, scipy, onnxruntime and nn.Module calls return Any, it would only add casts)
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+no_implicit_reexport = true
+strict_equality = true
+extra_checks = true

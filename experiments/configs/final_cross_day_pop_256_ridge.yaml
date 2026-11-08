@@ -1,0 +1,17 @@
+# Baselines for final_cross_day_pop_256 on the same recordings: ridge (alpha 10, running-mean inputs), constant, zero.
+name: final_cross_day_pop_256_ridge
+protocol: cross_day_pop
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: running_mean
+filter: {montage: car}  # each grid's mean subtracted
+seeds: [0]
+save_predictions: true
+save_models: false
+models:
+  zero: {}
+  constant: {}
+  ridge: {alpha: 10.0}

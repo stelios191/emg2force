@@ -1,0 +1,14 @@
+# First new-day recipe (final_cross_day_256), seeds 1-4 for the 5-seed mean.
+name: final_cross_day_256_seeds
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: running_mean
+seeds: [1, 2, 3, 4]
+save_predictions: false
+save_models: false
+protocol: cross_day
+models:
+  tcn: {hidden: 64, kernel: 2, dilations: [1, 2, 4, 8, 16], dropout: 0.3, weight_decay: 0.01, steps: 2000}

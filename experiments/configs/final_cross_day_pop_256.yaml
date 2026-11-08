@@ -1,0 +1,16 @@
+# Final new-day recipe: the person's day 1 + both days of 19 other people (half of each batch from the person),
+# electrode shifts up to 1 electrode, CAR, no input normalisation. No day-2 labels of the person.
+name: final_cross_day_pop_256
+protocol: cross_day_pop
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: none  # holds a press (see docs/experiments.md)
+filter: {montage: car}  # each grid's mean subtracted
+seeds: [0]
+save_predictions: true
+save_models: all  # every fold: the held-press test on the 16. Fold s02 is assets/decoder.state.pt
+models:
+  tcn: {hidden: 64, dilations: [1, 2, 4, 8, 16], dropout: 0.3, weight_decay: 0.01, steps: 2000, personal_share: 0.5, aug_shift: 1.0}

@@ -1,0 +1,15 @@
+# The matched ridge of final_cross_day_pop_256_ridge with the TCN's person weighting (half the weight on the person).
+name: final_cross_day_pop_256_ridge_weighted
+protocol: cross_day_pop
+subjects: eval
+mvc_convention: session
+label_filter: zero_phase_lowpass_10hz
+history: 32
+warmup_s: 0.7
+input_norm: running_mean
+filter: {montage: car}  # each grid's mean subtracted
+seeds: [0]
+save_predictions: true
+save_models: false
+models:
+  ridge: {alpha: 10.0, personal_share: 0.5}
